@@ -13,24 +13,11 @@ const client = new MongoClient(uri, {
 
 const collectionName = 'HNGX_STAGE-TWO'
 const dbName = 'users';
-const users =[
-    {
-        id: 1,
-        name: 'Jason',
-    },
-    {
-        id: 2,
-        name: 'Jack',
-    },
-    {
-        id: 3,
-        name: 'Jude',
-    }
-]
 
  function dbConnect() {
-    // Connect the client to the server	(optional starting in v4.7)
-    client.connect();
+    // Connect the client to the server	
+    const conn = client.connect();
+    if (!conn) return {error: 'Connection error'};
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
     return collection;
@@ -55,8 +42,12 @@ async function getUser( userId ) {
     const  collection =  dbConnect();
     const user = await collection.findOne({_id: new ObjectId(userId)});
     console.log(user)
-    return user;
+    if(!user) return {error: 'User not found'};
 
+    return user;
+   } catch (err){
+
+    console.log("Error while getting user", err);
 
   } finally {
     // Ensures that the client will close when you finish/error
@@ -67,24 +58,65 @@ async function getUser( userId ) {
 
 
 async function addUser(username){
-    const collection = dbConnect();
-    const result = await collection.insertOne({name: username});
-    console.log(result);
-    return result;
+    try {
+        const collection = dbConnect();
+
+        if (!username) return {error: 'Please provide a name'};
+
+        const newUser = {
+            name: username
+        }
+        const result = await collection.insertOne(newUser);
+        console.log(result);
+        return result;
+
+    } catch (err) {
+        console.log(err);
+    } 
+    finally {
+        await client.close();
+    }
 
 }
 
-async function editUser(userId) {
-    const collection = dbConnect();;
-    const result = await collection.updateOne({id: userId}, {$set: {name: username}})
-    return result;
+async function editUser(userId, username) {
+    try {
+        const isUserExisting  = await getUser(userId);
+        if (!isUserExisting.error) {
+            const conn =  await client.connect();
+            if (conn) console.log("Connected successfully to server");
+            const db = client.db(dbName);
+            const collection = db.collection(collectionName);
+            const result = await collection.updateOne({_id: new ObjectId(userId)}, {$set: {name: username}});
+            console.log(result);
+            return result;
+        }
+    } catch (err) {
+        console.log("Errro while edditing user", err)
+    }
+    finally {
+        await client.close();
+    }
+
 }
 
 async function deletUser(userId) {
-    const collection = dbConnect();
-    const result = await collection.deleteOne({_id: new ObjectId(userId)});
-    console.log(result);
-    return result;
+    try {
+        const collection = dbConnect();
+        const isUserExisting = await getUser(userId);
+        if (!isUserExisting.error) {
+            const result = await collection.deleteOne({_id: new ObjectId(userId)});
+            console.log(result);
+            return result;
+        }
+        return isUserExisting.error
+
+    } catch (err) {
+        console.log(err);
+    }
+    finally {
+        await client.close();
+    }
 }
 
 module.exports = {getUser, addUser, editUser, deletUser, getCollection};

@@ -24,16 +24,14 @@ app.get('/api/:userId', async (req, res) => {
 
 // add a user
 app.post('/api', async (req, res) => {
-    const username = req.body.person;
-    console.log(req.body)
-    // console.log(username)
+    const username = req.query.person;
     res.json(await dbConn.addUser(username));
 })
 
 // edit a user
 app.put('/api/:userId', async (req, res) => {
     const userId = req.params.userId;
-    const username = req.body.person;
+    const username = req.query.person;
     res.json(await dbConn.editUser(userId, username))
 });
 
