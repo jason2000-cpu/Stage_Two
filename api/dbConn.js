@@ -82,7 +82,7 @@ async function editUser(userId) {
 
 async function deletUser(userId) {
     const collection = dbConnect();
-    const result = await collection.deleteOne({id: userId});
+    const result = await collection.deleteOne({_id: new ObjectId(userId)});
     console.log(result);
     return result;
 }
