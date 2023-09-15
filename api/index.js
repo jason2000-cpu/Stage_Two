@@ -58,12 +58,11 @@ app.delete('/api/:userId', async (req, res) => {
 
 
 async function run() {
-    const conn =  await client.connect( err => {
+     await client.connect( err => {
         if(err) { console.error(err); return err;}
         // connection to mongo is successful, listen for requests
-
     })
-    app.listen(port, () => {
+     await app.listen(port, () => {
         console.log(`The server is live at http://localhost:${port}/api`);
     
     });

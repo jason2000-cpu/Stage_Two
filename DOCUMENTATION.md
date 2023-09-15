@@ -17,16 +17,21 @@
 
 ```http://localhost:3000/api?person=john```
 
+* body: json object with the name of the person to create
+* returns: the created person
+
 ```json
 {
-    "id": 1,
-    "username": "john"
+  acknowledged: true,
+  insertedId: new ObjectId("650432f0c88f8a07f52c165b")
 }
 ```
 
 ## Retrieve all persons
 
 ```http://localhost:3000/api```
+
+* returns: array of all persons
 
 ```json
 [
