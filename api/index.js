@@ -10,25 +10,25 @@ app.use(cors());
 app.use(express.json());
 
 
-// get all users
+// get all users -working
 app.get('/api', async (req, res) => {
     res.send(await dbConn.getCollection());
 })
 
-// get one user using id
+// get one user using id -working
 app.get('/api/:userId', async (req, res) => {
     const userId = req.params.userId;
     console.log(userId);
     res.json(await dbConn.getUser(userId))
 })
 
-// add a user
+// add a user -working
 app.post('/api', async (req, res) => {
     const username = req.query.person;
     res.json(await dbConn.addUser(username));
 })
 
-// edit a user
+// edit a user -working
 app.put('/api/:userId', async (req, res) => {
     const userId = req.params.userId;
     const username = req.query.person;
