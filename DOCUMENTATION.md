@@ -85,8 +85,8 @@
 
 ```http://localhost:3000/api/:userId```
     
-     * userId: id of the person to delete
-     * returns: deleted person if person with 'userId' exists, otherwise returns 'user not found'
+* userId: id of the person to delete
+* returns: deleted person if person with 'userId' exists, otherwise returns 'user not found'
     
     ```json
     {
@@ -94,4 +94,3 @@
         "username": "John"
     }
     ```
-    
