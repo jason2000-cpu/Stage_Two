@@ -30,10 +30,8 @@ async function getCollection() {
     try {
         const collection = dbConnect();
         const users = await collection.find({}).toArray();
-        console.log(users);
         return users;
     } catch (err) {
-        console.log(err);
         return `${err}`;
     }
     finally {
@@ -44,12 +42,10 @@ async function getUser( userId ) {
   try {
     const  collection =   dbConnect();
     const user = await collection.findOne({_id: new ObjectId(userId)});
-    console.log(user)
     if(!user) return {error: 'User not found'};
 
     return user;
    } catch (err){
-    console.log("Error while getting user", err);
     return `${err}`;
 
   } finally {
@@ -98,7 +94,6 @@ async function editUser(userId, username) {
             const collection = db.collection(collectionName);
 
             const result = await collection.updateOne({_id: new ObjectId(userId)}, {$set: {name: username}});
-            console.log(result);
             return result;
         }
         return isUserExisting.error;
@@ -121,7 +116,6 @@ async function deletUser(userId) {
         const isUserExisting = await getUser(userId);
         if (!isUserExisting.error) {
             const result = await collection.deleteOne({_id: new ObjectId(userId)});
-            console.log(result);
             return result;
         }
         return isUserExisting.error
