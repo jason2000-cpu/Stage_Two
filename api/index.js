@@ -10,6 +10,20 @@ app.use(cors());
 app.use(express.json());
 
 
+
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const uri = "mongodb+srv://JasonAdmin:Jack2000@cluster0.qkqu6un.mongodb.net/?retryWrites=true&w=majority";
+
+// const uri = "mongodb://127.0.0.1:27017/";
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+
 // get all users -working
 app.get('/api', async (req, res) => {
     res.send(await dbConn.getCollection());
@@ -43,7 +57,11 @@ app.delete('/api/:userId', async (req, res) => {
 });
 
 
-app.listen(port, () => {
-    console.log(`The server is live at http://localhost:${port}/api`);
-
+client.connect( err => {
+    if(err) { console.error(err); return err;}
+    // connection to mongo is successful, listen for requests
+    app.listen(port, () => {
+        console.log(`The server is live at http://localhost:${port}/api`);
+    
+    })
 })
