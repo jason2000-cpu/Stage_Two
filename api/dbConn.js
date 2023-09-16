@@ -126,12 +126,13 @@ async function editUser(userId, username) {
 
 async function deletUser(userId) {
     try {
-        // const collection = await dbConnect();
-        await client.connect();
-        const db = client.db(dbName);
-        const collection = db.collection(collectionName);
         const isUserExisting = await getUser(userId);
         if (!isUserExisting.error) {
+           // const collection = await dbConnect();
+            await client.connect();
+            const db = client.db(dbName);
+            
+            const collection = db.collection(collectionName);
             const result = await collection.deleteOne({_id: new ObjectId(userId)});
             if (result.deletedCount === 0) {
                 return {error: 'User not found'}
