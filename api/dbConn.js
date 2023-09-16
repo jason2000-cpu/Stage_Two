@@ -28,7 +28,10 @@ const collectionName = 'users';
 
 async function getCollection() {
     try {
-        const collection = dbConnect();
+        const conn = client.connect();
+        if (!conn) return {error: 'Connection error'};
+        const db = client.db(dbName);
+        const collection = db.collection(collectionName);
         const users = await collection.find({}).toArray();
         return users;
     } catch (err) {
@@ -40,7 +43,11 @@ async function getCollection() {
 }
 async function getUser( userId ) {
   try {
-    const  collection =   dbConnect();
+    // Connect the client to the server	
+    const conn = client.connect();
+    if (!conn) return {error: 'Connection error'};
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
     const user = await collection.findOne({_id: new ObjectId(userId)});
     if(!user) return {error: 'User not found'};
 
@@ -60,7 +67,10 @@ async function addUser(username){
     const regex = /^[a-zA-Z]+$/;
     if (!regex.test(username)) return {error: 'Please provide a valid name'};
     try {
-        const collection =  await dbConnect();
+         // Connect the client to the server	
+        await  client.connect();
+        const db = client.db(dbName);
+        const collection = db.collection(collectionName);
 
         if (!username) return {error: 'Please provide a name'};
 
@@ -68,8 +78,12 @@ async function addUser(username){
             name: username
         }
         const result = await collection.insertOne(newUser);
+        if (result.insertedCount === 0) {
+            return {error: 'User not added'}
+        }
+
         console.log(result);
-        return result;
+        return {message: 'User added successfully'};
 
     } catch (err) {
         console.log(err);
@@ -94,7 +108,11 @@ async function editUser(userId, username) {
             const collection = db.collection(collectionName);
 
             const result = await collection.updateOne({_id: new ObjectId(userId)}, {$set: {name: username}});
-            return result;
+            if (result.modifiedCount === 0) {
+                return {error: 'User not found'}
+            }
+
+            return {message: 'User updated successfully'};
         }
         return isUserExisting.error;
     } catch (err) {
@@ -116,7 +134,10 @@ async function deletUser(userId) {
         const isUserExisting = await getUser(userId);
         if (!isUserExisting.error) {
             const result = await collection.deleteOne({_id: new ObjectId(userId)});
-            return result;
+            if (result.deletedCount === 0) {
+                return {error: 'User not found'}
+            }
+            return {message: 'User deleted successfully'};
         }
         return isUserExisting.error
 
