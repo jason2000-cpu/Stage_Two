@@ -44,8 +44,7 @@ async function getCollection() {
 async function getUser( userId ) {
   try {
     // Connect the client to the server	
-    const conn = client.connect();
-    if (!conn) return {error: 'Connection error'};
+    await client.connect();
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
     const user = await collection.findOne({_id: new ObjectId(userId)});
